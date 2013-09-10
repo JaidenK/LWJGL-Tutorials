@@ -40,11 +40,6 @@ public class OpenGL_Object {
 		for(byte i = 0; i < indices.length; i++) {
 			indices[i] = i;
 		}
-		/*
-		if((indices.length % 3) != 0) {
-			indices[indices.length-1] = 0;
-		}
-		*/
 		
 		if(glVers >= 3.2) {
 			
@@ -77,19 +72,16 @@ public class OpenGL_Object {
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
 			GL20.glEnableVertexAttribArray(0);
 			GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
-			//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 			
 			vbocID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbocID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
 			GL20.glEnableVertexAttribArray(1);
 			GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
-			//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 			
 			vboiID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiID);
 			GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
-			//GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 			
 			GL30.glBindVertexArray(0);
 			
@@ -120,23 +112,6 @@ public class OpenGL_Object {
 			
 			GL20.glUseProgram(0);
 		}
-	}
-	
-	public void translate(float x, float y) {
-		/*
-		for(int i = 0; i < (vertices.length - 3); i += 3) {
-			vertices[i] += x;
-			vertices[i+1] += y;
-			//simple translation, simply moves the X and Y vertices a percent of the screen
-		}
-		*/
-	}
-	
-	public void translate(int xPixels, int yPixels) {
-		float scaledX = (float) xPixels/scrnWidth;
-		float scaledY = (float) yPixels/scrnHeight;
-		
-		translate(scaledX, scaledY);
 	}
 	
 	//maybe make a version with the Z axis? We might want that to make things "disappear" behind some other object

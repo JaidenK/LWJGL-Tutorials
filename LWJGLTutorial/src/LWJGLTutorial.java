@@ -60,6 +60,7 @@ public class LWJGLTutorial {
 			glVersion = glVersionSplit[0] + "." + glVersionSplit[1];
 			glVersionf = Float.parseFloat(glVersion);
 			LWJGLTutorial.glVersionF = glVersionf;
+			System.out.println("The GL version for this computer is " + glVersion);
 		}
 		catch(NumberFormatException e) {
 			glVersion = "1.1f";
@@ -69,7 +70,6 @@ public class LWJGLTutorial {
 		
 		Display.destroy();
 		
-		//glVersionF = 1.1f;
 		
 		if(glVersionf < 3.1) {
 			try {
