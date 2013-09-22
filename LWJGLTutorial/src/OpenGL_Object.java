@@ -14,8 +14,8 @@ import org.lwjgl.util.glu.GLU;
 
 public class OpenGL_Object {
 	
-	private float glVers = LWJGLTutorial.glVersionF;
-	private int scrnWidth = LWJGLTutorial.WIDTH;
+	private float glVers;
+	private int scrnWidth = LWJGLTutorial.WIDTH;	//for use with translation and rotation
 	private int scrnHeight = LWJGLTutorial.HEIGHT;
 	
 	private float[] vertices;
@@ -33,6 +33,7 @@ public class OpenGL_Object {
 	FloatBuffer colorBuffer;
 
 	public OpenGL_Object(float[] vertices, float[] colors) {
+		glVers = LWJGLTutorial.glVersionF;
 		this.vertices = vertices;
 		this.colors = colors;
 		

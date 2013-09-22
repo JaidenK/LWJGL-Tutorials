@@ -1,38 +1,67 @@
 import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
+import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 
-public class PNG_Image extends PNGDecoder {
+public class PNG_Image {
 	
-	private float glVers = LWJGLTutorial.glVersionF;
-	private float[] corners = new float[12];	//3 points * 4 corners of the image. Should go counter-clockwise.
+	private PNGDecoder decoder;
+	ByteBuffer buffer;
+	private float glVers;
+	private float[] corner;
 	private float scale;
 	private int scrnWidth = LWJGLTutorial.WIDTH;
 	private int scrnHeight = LWJGLTutorial.HEIGHT;
+	private int textureID;
 
 	public PNG_Image(float[] corners, String filePath, float scale) throws IOException {
-		super(new FileInputStream(filePath));
-		this.scale = scale;
-		if(corners.length == 12) {
-			this.corners = corners;
+		glVers = LWJGLTutorial.glVersionF;
+		InputStream image = new FileInputStream(filePath);
+		try {
+			decoder = new PNGDecoder(image);
+			if(decoder.hasAlpha()) {
+				buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+				decoder.decode(buffer, decoder.getWidth() * 4, Format.RGBA);
+			}
+			else if(decoder.isRGB()) {
+				buffer = ByteBuffer.allocateDirect(3 * decoder.getWidth() * decoder.getHeight());
+				decoder.decode(buffer, decoder.getWidth() * 3, Format.RGB);
+			} else {
+				buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+				decoder.decode(buffer, decoder.getWidth() * 4, decoder.decideTextureFormat(Format.RGBA));
+			}
+			buffer.flip();
+		} finally {
+			image.close();
 		}
-		else if(corners.length < 12 && corners.length >= 3) {
-			//you should pick the "bottom-left" vertex and use the PNG's width and height values to fill in the blanks
-		}
+		textureID = GL11.glGenTextures();
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+		
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 	
-	public void draw() {	//check the PNGDecoder tutorial on LWJGL's wiki for a short tutorial, I'll figure out 3.2 rendering if you don't
-		if(glVers <= 3.1) {
-			
-		}
-		else if(glVers >= 3.2) {
-			
-		}
+	public void draw() {
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 	//sorry for the wonky spacing here, but otherwise
+						  0, 					//this extends way out and it's harder to follow
+						  GL11.GL_RGB, 			
+						  decoder.getWidth(), decoder.getHeight(), //anyway, what this does is upload 
+						  0, 									   //the texture data
+						  GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, 
+						  buffer);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 	}
 	
-	public void translate(float x, float y) {	//should mimic OpenGL_Object's method of rendering
+	public void translate(float x, float y) {
 		
 	}
 	
@@ -48,4 +77,8 @@ public class PNG_Image extends PNGDecoder {
 		
 	}
 	*/
+	
+	public void releaseGLMemory() {
+		GL11.glDeleteTextures(textureID);
+	}
 }
