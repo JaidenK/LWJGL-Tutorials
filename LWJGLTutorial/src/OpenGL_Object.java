@@ -1,3 +1,8 @@
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -97,10 +102,14 @@ public class OpenGL_Object {
 	public void draw() {
 		if(glVers <= 3.1) {
 			GL11.glBegin(GL11.GL_TRIANGLES);
-			for(int i = 0; i < (vertices.length - 3); i += 3) {
-				GL11.glColor3f(colors[i], colors[i+1], colors[i+2]);
-				GL11.glVertex3f(vertices[i], vertices[i+1], vertices[i+2]);
-			}
+				GL11.glColor3f(colors[0], colors[1], colors[2]);
+				GL11.glVertex3f((vertices[0] * scrnWidth), (vertices[1] * scrnHeight), vertices[2]);
+				
+				GL11.glColor3f(colors[3], colors[4], colors[5]);
+				GL11.glVertex3f((vertices[3] * scrnWidth), (vertices[4] * scrnHeight), vertices[5]);
+				
+				GL11.glColor3f(colors[6], colors[7], colors[8]);
+				GL11.glVertex3f((vertices[6] * scrnWidth), (vertices[7] * scrnHeight), vertices[8]);
 			GL11.glEnd();
 		}
 		else if(glVers >= 3.2) {
@@ -115,9 +124,7 @@ public class OpenGL_Object {
 		}
 	}
 	
-	//maybe make a version with the Z axis? We might want that to make things "disappear" behind some other object
-	
-	public void rotate(float z) {	//uses radians!
+	public void rotate(float z) {
 		
 	}
 	
@@ -126,6 +133,7 @@ public class OpenGL_Object {
 			vertices[i] *= scale;
 			vertices[i+1] *= scale;
 		}
+		
 	}
 	
 	public void releaseMemory() {

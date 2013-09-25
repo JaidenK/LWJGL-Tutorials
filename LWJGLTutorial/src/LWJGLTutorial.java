@@ -71,7 +71,7 @@ public class LWJGLTutorial {
 		Display.destroy();
 		
 		
-		if(glVersionf < 3.1) {
+		if(glVersionf <= 3.1) {
 			try {
 				Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 				Display.setTitle("LWJGL Tutorial");
@@ -104,6 +104,12 @@ public class LWJGLTutorial {
 			-0.05f, 0.55f, 0.0f
 		};
 		
+		float[] v1 = {
+				-1.f, -.95f, -1.f,
+				1.f, -1.f, 1.f,
+				1.f, -.95f, -1.f
+		};
+		
 		float[] c0 = {			//first colors
 			0.3f, 0.4f, 0.8f,	//(77, 102, 204), or 0x4D66CC
 			0.0f, 0.3f, 0.5f,	//(0, 77, 128),   or 0x004D80
@@ -111,10 +117,11 @@ public class LWJGLTutorial {
 		};
 		
 		objects.add(new OpenGL_Object(v0, c0));
+		objects.add(new OpenGL_Object(v1, c0));
 	
 		while(!Display.isCloseRequested()) {
 			
-			GL11.glClearColor(0.6f, 0.8f, 1.0f, 0.0f);
+			GL11.glClearColor(0.3f, 0.7f, 0.8f, 0.4f);
 			
 			render(objects, pngs);
 			
@@ -133,7 +140,7 @@ public class LWJGLTutorial {
 		if(glVersionF < 3.1) {
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, width, 0, height, 0.1f, 0.6f);
+			GL11.glOrtho(0, width, 0, height, -1f, 1f);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		}
 		else {
@@ -144,7 +151,7 @@ public class LWJGLTutorial {
 			float far = 0.6f;
 			
 			float yScaled = (float) (1/(Math.tan((FOV / 2) * (Math.PI / 180)))); 	//sets up the scale of y at the "back"
-			float xScaled = yScaled / aspectRatio; 					//take the back height and divides it by the ratio which is still uses, giving the width
+			float xScaled = yScaled / aspectRatio; 					//take the back height and divides it by the ratio which is still used, giving the width
 			float depth = far - near; 				//finds the depth, in this case 0.5f
 			
 			projectionMatrix.m00 = xScaled;						/* These variables are internally used by OpenGL and represent 		*/
@@ -153,6 +160,21 @@ public class LWJGLTutorial {
 			projectionMatrix.m23 = -1;							/* the "camera". Legacy OpenGL takes care of this automatic-   		*/
 			projectionMatrix.m32 = -((2 * near * far) / depth); /* ally using the functions seen above (glOrtho being the big one). */
 			projectionMatrix.m33 = 0;
+			
+			/* ((1/Math.tan((FOV/2) * (Math.PI/180)))/aspectRatio)	 	   0			0			0
+			 * 
+			 * 
+			 * 
+			 * 0			(1/(Math.tan((FOV/2) * (Math.PI/180))))						0			0
+			 * 
+			 * 
+			 * 
+			 * 0							0						-((far+near)/depth)				-1
+			 * 
+			 * 
+			 * 
+			 * 0							0						-2((2*near*far)/depth)			 0 
+			 */
 			
 			vertShaderID = getShader("shaders/vertShader.glsl", GL20.GL_VERTEX_SHADER);
 			fragShaderID = getShader("shaders/colorShader.glsl", GL20.GL_FRAGMENT_SHADER);
