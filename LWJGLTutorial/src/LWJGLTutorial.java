@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 
 public class LWJGLTutorial {
@@ -70,7 +71,6 @@ public class LWJGLTutorial {
 		
 		Display.destroy();
 		
-		
 		if(glVersionf <= 3.1) {
 			try {
 				Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
@@ -105,9 +105,16 @@ public class LWJGLTutorial {
 		};
 		
 		float[] v1 = {
-				-1.f, -.95f, -1.f,
+				-20.f, -.955f, -1.f,
 				1.f, -1.f, 1.f,
 				1.f, -.95f, -1.f
+		};
+		
+		float[] v2 = {
+				-.5f, -.5f, 0.f,
+				.5f, -.5f, 0.f,
+				.5f, .5f, 0.f,
+				-.5f, .5f, 0.f
 		};
 		
 		float[] c0 = {			//first colors
@@ -118,6 +125,12 @@ public class LWJGLTutorial {
 		
 		objects.add(new OpenGL_Object(v0, c0));
 		objects.add(new OpenGL_Object(v1, c0));
+		
+		try {
+			pngs.add(new PNG_Image(v2, "res/CaveDwellersPixelated.png", 1.f));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	
 		while(!Display.isCloseRequested()) {
 			
@@ -128,27 +141,33 @@ public class LWJGLTutorial {
 			Display.update();
 			Display.sync(60);
 		}
-		for(int i = 0; i < objects.size(); i++) {
-			objects.get(i).releaseMemory();
+		
+		if(LWJGLTutorial.glVersionF >= 3.2) {
+			for(int i = 0; i < objects.size(); i++) {
+				objects.get(i).releaseMemory();
+			}
+			releaseGLMemory();
 		}
-		releaseGLMemory();
+		
 		Display.destroy();
 	}
 	
 	public void initGL(float glVersionF, int width, int height) {
 		
 		if(glVersionF < 3.1) {
+			
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, width, 0, height, -1f, 1f);
+			GL11.glOrtho(-(width/2), (width/2), -(height/2), (height/2), -1f, 1f);
+			//GLU.gluPerspective(45.f, (float)(LWJGLTutorial.WIDTH / LWJGLTutorial.HEIGHT), 1.f, -1.f);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		}
 		else {
 			projectionMatrix = new Matrix4f();
 			float aspectRatio = (float) (width/height);
 			float FOV = 80f;		//our field of view is the scale of the "back"
-			float near = 0.1f;
-			float far = 0.6f;
+			float near = 1f;
+			float far = -1f;
 			
 			float yScaled = (float) (1/(Math.tan((FOV / 2) * (Math.PI / 180)))); 	//sets up the scale of y at the "back"
 			float xScaled = yScaled / aspectRatio; 					//take the back height and divides it by the ratio which is still used, giving the width

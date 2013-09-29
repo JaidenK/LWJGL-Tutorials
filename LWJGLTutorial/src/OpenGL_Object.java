@@ -103,13 +103,13 @@ public class OpenGL_Object {
 		if(glVers <= 3.1) {
 			GL11.glBegin(GL11.GL_TRIANGLES);
 				GL11.glColor3f(colors[0], colors[1], colors[2]);
-				GL11.glVertex3f((vertices[0] * scrnWidth), (vertices[1] * scrnHeight), vertices[2]);
+				GL11.glVertex3f((vertices[0] * (float)(scrnWidth/2)), (vertices[1] * (float)(scrnHeight/2)), vertices[2]);
 				
 				GL11.glColor3f(colors[3], colors[4], colors[5]);
-				GL11.glVertex3f((vertices[3] * scrnWidth), (vertices[4] * scrnHeight), vertices[5]);
+				GL11.glVertex3f((vertices[3] * (float)(scrnWidth/2)), (vertices[4] * (float)(scrnHeight/2)), vertices[5]);
 				
 				GL11.glColor3f(colors[6], colors[7], colors[8]);
-				GL11.glVertex3f((vertices[6] * scrnWidth), (vertices[7] * scrnHeight), vertices[8]);
+				GL11.glVertex3f((vertices[6] * (float)(scrnWidth/2)), (vertices[7] * (float)(scrnHeight/2)), vertices[8]);
 			GL11.glEnd();
 		}
 		else if(glVers >= 3.2) {
