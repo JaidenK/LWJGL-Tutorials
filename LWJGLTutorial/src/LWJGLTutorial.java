@@ -30,7 +30,7 @@ public class LWJGLTutorial {
 	public static float glVersionF;
 	
 	private List<OpenGL_Object> objects = new ArrayList<OpenGL_Object>();
-	private List<PNG_Image> pngs = new ArrayList<PNG_Image>();
+	private List<PNG_Texture> pngs = new ArrayList<PNG_Texture>();
 	public static Matrix4f projectionMatrix;
 	public static FloatBuffer projMatBuffer = BufferUtils.createFloatBuffer(16);
 	
@@ -98,43 +98,41 @@ public class LWJGLTutorial {
 		
 		initGL(glVersionf, WIDTH, HEIGHT);
 		
-		float[] v0 = { 			//first vertices
+		float[] firstVertices = {
 			0.2f, 0.4f, 0.0f,
 			0.2f, 0.7f, 0.0f,
 			-0.05f, 0.55f, 0.0f
 		};
 		
-		float[] v1 = {
+		float[] secondVertices = {
 				-20.f, -.955f, -1.f,
 				1.f, -1.f, 1.f,
 				1.f, -.95f, -1.f
 		};
 		
-		float[] v2 = {
-				-.5f, -.5f, 0.f,
-				.5f, -.5f, 0.f,
-				.5f, .5f, 0.f,
-				-.5f, .5f, 0.f
+		float[] thirdVertices = {
+				-.5f, -.5f, 0.5f,
+				.5f, -.5f, 0.5f,
+				.5f, .5f, 0.5f,
+				-.5f, .5f, 0.5f
 		};
 		
-		float[] c0 = {			//first colors
+		float[] firstColors = {
 			0.3f, 0.4f, 0.8f,	//(77, 102, 204), or 0x4D66CC
 			0.0f, 0.3f, 0.5f,	//(0, 77, 128),   or 0x004D80
 			0.6f, 0.2f, 0.7f	//(153, 51, 179), or 0x9933B3
 		};
 		
-		objects.add(new OpenGL_Object(v0, c0));
-		objects.add(new OpenGL_Object(v1, c0));
+		objects.add(new OpenGL_Object(firstVertices, firstColors));
+		objects.add(new OpenGL_Object(secondVertices, firstColors));
 		
 		try {
-			pngs.add(new PNG_Image(v2, "res/CaveDwellersPixelated.png", 1.f));
+			pngs.add(new PNG_Texture(thirdVertices, "res/CaveDwellersPixelated.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	
 		while(!Display.isCloseRequested()) {
-			
-			GL11.glClearColor(0.3f, 0.7f, 0.8f, 0.4f);
 			
 			render(objects, pngs);
 			
@@ -154,13 +152,16 @@ public class LWJGLTutorial {
 	
 	public void initGL(float glVersionF, int width, int height) {
 		
+		GL11.glClearColor(0.3f, 0.7f, 0.8f, 0.4f);
+		
 		if(glVersionF < 3.1) {
 			
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
 			GL11.glOrtho(-(width/2), (width/2), -(height/2), (height/2), -1f, 1f);
-			//GLU.gluPerspective(45.f, (float)(LWJGLTutorial.WIDTH / LWJGLTutorial.HEIGHT), 1.f, -1.f);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 		else {
 			projectionMatrix = new Matrix4f();
@@ -214,13 +215,13 @@ public class LWJGLTutorial {
 		}
 	}
 	
-	public void renderPNGs(List<PNG_Image> pngs) {
+	public void renderPNGs(List<PNG_Texture> pngs) {
 		for(int i = 0; i < pngs.size(); i++) {
 			pngs.get(i).draw();
 		}
 	}
 	
-	public void render(List<OpenGL_Object> objects, List<PNG_Image> pngs) {
+	public void render(List<OpenGL_Object> objects, List<PNG_Texture> pngs) {
 		if(objects.size() != 0) {
 			renderObjects(objects);
 		}

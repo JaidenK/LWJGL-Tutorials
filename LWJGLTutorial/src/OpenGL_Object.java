@@ -1,8 +1,3 @@
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2f;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -20,8 +15,8 @@ import org.lwjgl.util.glu.GLU;
 public class OpenGL_Object {
 	
 	private float glVers;
-	private int scrnWidth = LWJGLTutorial.WIDTH;	//for use with translation and rotation
-	private int scrnHeight = LWJGLTutorial.HEIGHT;
+	private int screenWidth = LWJGLTutorial.WIDTH;	//for use with translation and rotation
+	private int screenHeight = LWJGLTutorial.HEIGHT;
 	
 	private float[] vertices;
 	private float[] colors;
@@ -32,7 +27,10 @@ public class OpenGL_Object {
 	private int vbocID = 0;	//vertex buffer object color
 	private int indexCount = 0;
 	private int shaderProgramID = LWJGLTutorial.shaderProgramID;
-	private byte[] indices;	//essentially the different points used
+	private byte[] indices;
+	
+	private float adjustedWidth = (float)(screenWidth/2);
+	private float adjustedHeight = (float)(screenHeight/2);
 	
 	FloatBuffer verticesBuffer;
 	FloatBuffer colorBuffer;
@@ -57,7 +55,7 @@ public class OpenGL_Object {
 			
 			int projMatID = GL20.glGetUniformLocation(shaderProgramID, "LWJGLTutorial.projectionMatrix");
 			
-			verticesBuffer = BufferUtils.createFloatBuffer(vertices.length );
+			verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 			verticesBuffer.put(vertices);
 			verticesBuffer.flip();
 			
@@ -103,13 +101,13 @@ public class OpenGL_Object {
 		if(glVers <= 3.1) {
 			GL11.glBegin(GL11.GL_TRIANGLES);
 				GL11.glColor3f(colors[0], colors[1], colors[2]);
-				GL11.glVertex3f((vertices[0] * (float)(scrnWidth/2)), (vertices[1] * (float)(scrnHeight/2)), vertices[2]);
+				GL11.glVertex3f((vertices[0] * adjustedWidth), (vertices[1] * adjustedHeight), vertices[2]);
 				
 				GL11.glColor3f(colors[3], colors[4], colors[5]);
-				GL11.glVertex3f((vertices[3] * (float)(scrnWidth/2)), (vertices[4] * (float)(scrnHeight/2)), vertices[5]);
+				GL11.glVertex3f((vertices[3] * adjustedWidth), (vertices[4] * adjustedHeight), vertices[5]);
 				
 				GL11.glColor3f(colors[6], colors[7], colors[8]);
-				GL11.glVertex3f((vertices[6] * (float)(scrnWidth/2)), (vertices[7] * (float)(scrnHeight/2)), vertices[8]);
+				GL11.glVertex3f((vertices[6] * adjustedWidth), (vertices[7] * adjustedHeight), vertices[8]);
 			GL11.glEnd();
 		}
 		else if(glVers >= 3.2) {
@@ -128,12 +126,8 @@ public class OpenGL_Object {
 		
 	}
 	
-	public void resize(float scale) {
-		for(int i = 0; i < (vertices.length - 3); i += 3) {
-			vertices[i] *= scale;
-			vertices[i+1] *= scale;
-		}
-		
+	public void translate(float x, float y) {
+		//can be implemented by just adding to "vertices" and then redoing the buffer stuff
 	}
 	
 	public void releaseMemory() {
